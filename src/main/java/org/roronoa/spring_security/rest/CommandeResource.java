@@ -5,7 +5,6 @@ import org.roronoa.spring_security.entity.Order;
 import org.roronoa.spring_security.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 
 @RestController

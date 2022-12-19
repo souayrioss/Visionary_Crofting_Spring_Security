@@ -23,7 +23,7 @@ public class OrderService {
         order =  orderRepository.save(order);
         Order finalOrder = order;
         order.getOrderItems().forEach(orderItem -> {
-            orderItem.setOrder(finalOrder);
+             orderItem.setOrder(finalOrder);
             orderItemService.save(orderItem);
         });
         return order;
