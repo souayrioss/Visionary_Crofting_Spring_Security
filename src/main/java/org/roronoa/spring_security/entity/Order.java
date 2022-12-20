@@ -5,7 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -33,15 +39,14 @@ public class Order implements Serializable {
     @NotEmpty @NotNull
     private Double totalPrice;
 
+    @ManyToOne
+    @Valid
+    @NotNull @NotEmpty
+    private User user;
+
     @NotNull @NotEmpty @Valid
     @OneToMany(mappedBy = "order")
     private Set<OrderItem> orderItems = new HashSet<>();
 
-    public Order(UUID uuid, LocalDateTime createdAt, Double totalPrice, @NotNull @NotEmpty Set<OrderItem> orderItems) {
-        this.uuid = uuid;
-        this.createdAt = createdAt;
-        this.totalPrice = totalPrice;
-        this.orderItems = orderItems;
-    }
 
 }
