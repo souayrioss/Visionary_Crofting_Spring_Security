@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @NoArgsConstructor
 public class UserDTO {
+    private String uuid;
     @NotBlank
     @NotEmpty
     private String name;
