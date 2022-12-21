@@ -1,7 +1,10 @@
-package org.roronoa.spring_security.service.dto;
+package org.roronoa.spring_security.dto;
+
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@NoArgsConstructor
 public class ResponseDTO<T> implements Serializable {
 
     private String status;
