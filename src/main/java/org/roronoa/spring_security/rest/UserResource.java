@@ -2,25 +2,28 @@ package org.roronoa.spring_security.rest;
 
 
 import lombok.RequiredArgsConstructor;
+import org.roronoa.spring_security.config.JwtUtils;
+import org.roronoa.spring_security.dto.AuthDTO;
 import org.roronoa.spring_security.dto.ResponseDTO;
 import org.roronoa.spring_security.dto.UserDTO;
-import org.roronoa.spring_security.entity.User;
+import org.roronoa.spring_security.entity.UserApp;
 import org.roronoa.spring_security.service.IUserService;
 import org.roronoa.spring_security.util.EntityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.roronoa.spring_security.util.IConstantes.CODE_000;
-import static org.roronoa.spring_security.util.IConstantes.CODE_001;
+import static org.roronoa.spring_security.util.IConstantes.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -28,14 +31,16 @@ import static org.roronoa.spring_security.util.IConstantes.CODE_001;
 public class UserResource {
 
     private final IUserService userService;
+    private final JwtUtils jwtUtils;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping(path = "/register")
     public ResponseEntity<ResponseDTO<UserDTO>> register(@RequestBody @Valid UserDTO userDTO){
         try {
-            User user = EntityUtils.userDTOToUser(userDTO);
-            userService.save(user);
+            UserApp user = EntityUtils.userDTOToUser(userDTO);
+            UserApp userApp = userService.save(user);
             ResponseDTO<UserDTO> response = new ResponseDTO<>() ;
-            response.setData(EntityUtils.userToUserDTO(user));
+            response.setData(EntityUtils.userToUserDTO(userApp));
             response.setStatus(CODE_001);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
@@ -45,11 +50,19 @@ public class UserResource {
         }
     }
     @PostMapping(path = "/login")
-    public ResponseEntity<ResponseDTO<UserDTO>> login(@RequestBody @Email @NotEmpty @NotBlank String email, @NotEmpty @NotBlank String password){
+    public ResponseEntity<ResponseDTO<UserDTO>> login(@RequestBody AuthDTO authDTO){
         try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authDTO.getEmail(),authDTO.getPassword()));
+            UserDetails user = userService.findByEmail(authDTO.getEmail());
             ResponseDTO<UserDTO> response = new ResponseDTO<>() ;
-            //response.setData(EntityUtils.userToUserDTO(user));
-            response.setStatus(CODE_001);
+            if (user != null){
+                response.setMessage(jwtUtils.generateToken(user));
+                   response.setStatus(CODE_001);
+                   response.setData((UserDTO) user);
+        }else {
+                response.setMessage("jwtUtils.generateToken(user)");
+                response.setStatus(CODE_002);
+            }
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
             ResponseDTO<UserDTO> response = new ResponseDTO<>() ;
@@ -58,11 +71,11 @@ public class UserResource {
         }
     }
 
-    @GetMapping(path = "/user")
+    @GetMapping(path = "/user/{uuid}")
     public ResponseEntity<ResponseDTO<UserDTO>> getUser(@PathVariable @NotEmpty @NotBlank String uuid){
         try {
             ResponseDTO<UserDTO> response = new ResponseDTO<>() ;
-            User user = userService.getUser(uuid);
+            UserApp user = userService.getUser(uuid);
             if (!Objects.isNull(user)){
                 response.setData(EntityUtils.userToUserDTO(user));
                 response.setStatus(CODE_001);
@@ -79,7 +92,7 @@ public class UserResource {
     @GetMapping(path = "/users")
     public ResponseEntity<ResponseDTO<List<UserDTO>>> getListUser(){
         try {
-           List<User> users = userService.getListUsers();
+           List<UserApp> users = userService.getListUsers();
             ResponseDTO<List<UserDTO>> response = new ResponseDTO<>() ;
             List<UserDTO> usersDTO = users.stream().map(EntityUtils::userToUserDTO).collect(Collectors.toList());
             response.setStatus(CODE_001);
