@@ -1,13 +1,15 @@
 package org.roronoa.spring_security.service;
 
-import org.roronoa.spring_security.entity.User;
-import org.roronoa.spring_security.dto.UserDTO;
+import org.roronoa.spring_security.entity.UserApp;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
 public interface IUserService {
-    User save(User user);
-    User getUser(String uuid);
-    List<User> getListUsers();
+    UserApp save(UserApp user);
+    UserApp getUser(String uuid);
+    List<UserApp> getListUsers();
+
+    UserDetails findByEmail(String email);
 
 }
