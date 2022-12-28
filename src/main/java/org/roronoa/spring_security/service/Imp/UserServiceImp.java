@@ -14,10 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -50,6 +47,9 @@ public class UserServiceImp implements IUserService {
     @Override
     public UserDetails findByEmail(String email){
         UserApp userApp = userRepository.findByEmail(email);
+        if (Objects.isNull(userApp)) {
+            return null;
+        }
         return new User(userApp.getEmail(),userApp.getPassword(), Collections.singleton(new SimpleGrantedAuthority(userApp.getRole().getNom())));
     }
 }
