@@ -1,8 +1,9 @@
 package org.roronoa.spring_security.rest;
 
 
+import org.roronoa.spring_security.dto.OrderDTO;
 import org.roronoa.spring_security.entity.Order;
-import org.roronoa.spring_security.service.OrderService;
+import org.roronoa.spring_security.service.Imp.OrderServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -12,12 +13,8 @@ import javax.validation.Valid;
 public class CommandeResource {
 
     @Autowired
-    OrderService orderService;
+    OrderServiceImp orderService;
 
-    @PostMapping("/") @ResponseBody
-    public Order save(@RequestBody @Valid Order order) {
-        return orderService.save(order);
-    }
 
 
 }
