@@ -42,7 +42,7 @@ public class Order implements Serializable {
     @ManyToOne
     @Valid
     @NotNull @NotEmpty
-    private User user;
+    private UserApp user;
 
     @NotNull @NotEmpty @Valid
     @OneToMany(mappedBy = "order")
