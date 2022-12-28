@@ -50,22 +50,22 @@ public class UserResource {
         }
     }
     @PostMapping(path = "/login")
-    public ResponseEntity<ResponseDTO<UserDTO>> login(@RequestBody AuthDTO authDTO){
+    public ResponseEntity<ResponseDTO<UserDetails>> login(@RequestBody AuthDTO authDTO){
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authDTO.getEmail(),authDTO.getPassword()));
+
             UserDetails user = userService.findByEmail(authDTO.getEmail());
-            ResponseDTO<UserDTO> response = new ResponseDTO<>() ;
+            ResponseDTO<UserDetails> response = new ResponseDTO<>() ;
             if (user != null){
                 response.setMessage(jwtUtils.generateToken(user));
                    response.setStatus(CODE_001);
-                   response.setData((UserDTO) user);
-        }else {
-                response.setMessage("jwtUtils.generateToken(user)");
+                   response.setData(user);
+            }else {
+                response.setMessage("user not found");
                 response.setStatus(CODE_002);
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
-            ResponseDTO<UserDTO> response = new ResponseDTO<>() ;
+            ResponseDTO<UserDetails> response = new ResponseDTO<>() ;
             response.setStatus(CODE_000);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }

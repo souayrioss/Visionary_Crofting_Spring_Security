@@ -1,4 +1,4 @@
-package org.roronoa.spring_security.service;
+package org.roronoa.spring_security.service.Imp;
 
 
 import org.roronoa.spring_security.entity.OrderItem;
@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderItemService {
+public class OrderItemServiceImp {
 
     @Autowired
     OrderItemRepository orderItemRepository;
