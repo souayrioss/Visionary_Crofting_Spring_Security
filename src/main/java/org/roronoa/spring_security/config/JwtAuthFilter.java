@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @RequiredArgsConstructor
@@ -32,20 +31,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("authorizationApp");
         final String userEmail;
         final String jwtToken;
-        if (authHeader == null || !authHeader.startsWith("oussam")){
+        if (authHeader == null || !authHeader.startsWith("oussama")){
             filterChain.doFilter(request,response);
         } else {
-            jwtToken=authHeader.substring(7);
+            jwtToken=authHeader.substring(8);
             userEmail = jwtUtils.extractUsername(jwtToken);
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                //TODO:check
                 UserDetails userDetails = userService.findByEmail(userEmail);
-
                 if (jwtUtils.isTokenValid(jwtToken,userDetails)){
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
                 }
             }
             filterChain.doFilter(request,response);

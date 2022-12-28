@@ -33,14 +33,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain SecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .csrf()
+                .and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/user/login").permitAll()
                 .antMatchers("/api/v1/user/register").hasAuthority(client)
                 .antMatchers(HttpMethod.POST,"/api/v1/product/**").hasAnyAuthority(stock,supplier)
                 .antMatchers("/api/v1/appelOffre/add").hasAuthority(stock)
                 .antMatchers("/api/v1/commande/**").hasAuthority(client)
-                .antMatchers(HttpMethod.GET,"/api/v1/product/**").hasAuthority(client)
+                .antMatchers(HttpMethod.GET,"/api/v1/product/**").permitAll()
                 .antMatchers("/api/v1/appelOffre/**").hasAuthority(supplier)
                 .and()
                 .sessionManagement()
